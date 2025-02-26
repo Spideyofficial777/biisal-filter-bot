@@ -35,7 +35,7 @@ sᴇɴᴅ ᴍᴇ ᴀɴʏ ᴍᴏᴠɪᴇ ᴏʀ sᴇʀɪᴇs ɴᴀᴍᴇ ᴀɴᴅ 
     TTS_TXT="""
 <b>• sᴇɴᴅ /tts ᴛᴏ ᴜsᴇ ᴛʜɪs ғᴇᴀᴛᴜʀᴇ</b>"""
 
-    ABOUT_TXT = """
+    ABOUT_TEXT = """
 <b>❍ ᴍʏ ɴᴀᴍᴇ : <a href="https://t.me/@Pushpa2_The_Rule_bot">ᴘᴜꜱʜᴘᴀ𝟸_Tʜᴇ_Rᴜʟᴇ_ʙᴏᴛ</a>
 ❍ ᴄʀᴇᴀᴛᴏʀ : <a href="https://t.me/Hacker_X_official_777">ʜᴀᴄᴋᴇʀ_x_ᴏꜰꜰɪᴄɪᴀʟ_777</a>
 ❍ ʟɪʙʀᴀʀʏ : <a href="https://pyrogram.org/">ᴘʏʀᴏɢʀᴀᴍ</a>
