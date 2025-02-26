@@ -1,7 +1,7 @@
 import datetime
 import pytz
 from motor.motor_asyncio import AsyncIOMotorClient
-from info import SETTINGS, PREMIUM_POINT,REF_PREMIUM,DATABASE_NAME, DATABASE_URI,DEFAULT_POST_MODE
+from info import SETTINGS, IS_PM_SEARCH, IS_SEND_MOVIE_UPDATE, PREMIUM_POINT,REF_PREMIUM,IS_VERIFY, SHORTENER_WEBSITE3, SHORTENER_API3, THREE_VERIFY_GAP, LINK_MODE, FILE_CAPTION, TUTORIAL, DATABASE_NAME, DATABASE_URI, IMDB, IMDB_TEMPLATE, PROTECT_CONTENT, AUTO_DELETE, SPELL_CHECK, AUTO_FILTER, LOG_VR_CHANNEL, SHORTENER_WEBSITE, SHORTENER_API, SHORTENER_WEBSITE2, SHORTENER_API2, TWO_VERIFY_GAP
 # from utils import get_seconds
 client = AsyncIOMotorClient(DATABASE_URI)
 mydb = client[DATABASE_NAME]
@@ -17,10 +17,10 @@ class Database:
         self.req = mydb.requests
         self.mGrp = mydb.mGrp
         self.pmMode = mydb.pmMode
-        self.stream_link = mydb.stream_link
+        self.jisshu_ads_link = mydb.jisshu_ads_link
         self.grp_and_ids = fsubs.grp_and_ids
         self.movies_update_channel = mydb.movies_update_channel
-        self.update_post_mode = mydb.update_post_mode
+        self.botcol = mydb.botcol
     def new_user(self, id, name):
         return dict(
             id = id,
@@ -76,6 +76,7 @@ class Database:
             user_data = {"id": id, "expiry_time": expiry_time}
             await db.update_user(user_data)
             await self.col.update_one({'id' : id} , {'$set':{'point' : 0}})
+            
     async def get_point(self , id):
         newPoint = await self.col.find_one({'id' : id})
         return newPoint['point'] if newPoint else None
@@ -233,29 +234,35 @@ class Database:
     async def get_user(self, user_id):
         user_data = await self.users.find_one({"id": user_id})
         return user_data
+
+    async def remove_ban(self, id):
+        ban_status = dict(
+            is_banned=False,
+            ban_reason=''
+        )
+        await self.col.update_one({'id': id}, {'$set': {'ban_status': ban_status}})
+    
+    async def ban_user(self, user_id, ban_reason="No Reason"):
+        ban_status = dict(
+            is_banned=True,
+            ban_reason=ban_reason
+        )
+        await self.col.update_one({'id': user_id}, {'$set': {'ban_status': ban_status}})
+
+    async def get_ban_status(self, id):
+        default = dict(
+            is_banned=False,
+            ban_reason=''
+        )
+        user = await self.col.find_one({'id':int(id)})
+        if not user:
+            return default
+        return user.get('ban_status', default)
+        
         
     async def update_user(self, user_data):
         await self.users.update_one({"id": user_data["id"]}, {"$set": user_data}, upsert=True)
 
-    async def has_premium_access(self, user_id):
-        user_data = await self.get_user(user_id)
-        if user_data:
-            expiry_time = user_data.get("expiry_time")
-            if expiry_time is None:
-                return False
-            elif isinstance(expiry_time, datetime.datetime) and datetime.datetime.now() <= expiry_time:
-                return True
-            else:
-                await self.users.update_one({"id": user_id}, {"$set": {"expiry_time": None}})
-        return False
-        
-    async def update_one(self, filter_query, update_data):
-        try:
-            result = await self.users.update_one(filter_query, update_data)
-            return result.matched_count == 1
-        except Exception as e:
-            print(f"Error updating document: {e}")
-            return False
 
     async def get_expired(self, current_time):
         expired_users = []
@@ -264,40 +271,90 @@ class Database:
                 expired_users.append(user)
         return expired_users
 
+    
+    async def has_premium_access(self, user_id):
+        user_data = await self.get_user(user_id)
+        if user_data:
+            expiry_time = user_data.get("expiry_time")
+            if expiry_time is None:
+                # User previously used the free trial, but it has ended.
+                return False
+            elif isinstance(expiry_time, datetime.datetime) and datetime.datetime.now() <= expiry_time:
+                return True
+            else:
+                await self.users.update_one({"id": user_id}, {"$set": {"expiry_time": None}})
+        return False
+    
+    async def check_remaining_uasge(self, user_id):
+        user_id = user_id
+        user_data = await self.get_user(user_id)        
+        expiry_time = user_data.get("expiry_time")
+        # Calculate remaining time
+        remaining_time = expiry_time - datetime.datetime.now()
+        return remaining_time
+
+    async def all_premium_users(self):
+        count = await self.users.count_documents({
+        "expiry_time": {"$gt": datetime.datetime.now()}
+        })
+        return count
+
+    async def update_one(self, filter_query, update_data):
+        try:
+            # Assuming self.client and self.users are set up properly
+            result = await self.users.update_one(filter_query, update_data)
+            return result.matched_count == 1
+        except Exception as e:
+            print(f"Error updating document: {e}")
+            return False
+
     async def remove_premium_access(self, user_id):
         return await self.update_one(
             {"id": user_id}, {"$set": {"expiry_time": None}}
         )
-    async def get_set_grp_links(self , links=None , ispm = None, index = 0):
-        try:
-            if (links and ispm) is not None :
-                await self.mGrp.update_one({} , {'$set': {'links': links , "ispm": bool(ispm)}}, upsert=True)
-            else:
-                myLinks = await self.mGrp.find_one({})
-                if myLinks is not None:
-                    if index == 0:
-                        return myLinks.get("links")[0] , myLinks.get("ispm")
-                    
-                    else :
-                        return myLinks.get("links")[1]
-                else:
-                    if index == 0:
-                        return "https://t.me/bisal_files" , False
-                    else :
-                        return "https://t.me/bisal_files"
-        except Exception as e:
-            print(f"got err in db set : {e}")
-    async def set_stream_link(self,link):
-        await self.stream_link.update_one({} , {'$set': {'link': link}} , upsert=True)
-    async def get_stream_link(self):
-        link = await self.stream_link.find_one({})
+                
+
+    async def check_trial_status(self, user_id):
+        user_data = await self.get_user(user_id)
+        if user_data:
+            return user_data.get("has_free_trial", False)
+        return False
+
+    # Free Trail Remove Logic
+    async def reset_free_trial(self, user_id=None):
+        if user_id is None:
+            # Reset for all users
+            update_data = {"$set": {"has_free_trial": False}}
+            result = await self.users.update_many({}, update_data)  # Empty query to match all users
+            return result.modified_count
+        else:
+            # Reset for a specific user
+            update_data = {"$set": {"has_free_trial": False}}
+            result = await self.users.update_one({"id": user_id}, update_data)
+            return 1 if result.modified_count > 0 else 0  # Return 1 if updated, 0 if not
+            
+
+    async def give_free_trial(self, user_id):
+        #await set_free_trial_status(user_id)
+        user_id = user_id
+        seconds = 5*60         
+        expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
+        user_data = {"id": user_id, "expiry_time": expiry_time, "has_free_trial": True}
+        await self.users.update_one({"id": user_id}, {"$set": user_data}, upsert=True)
+            
+     # JISSHU BOTS = @IM_JISSHU
+    async def jisshu_set_ads_link(self,link):
+        await self.jisshu_ads_link.update_one({} , {'$set': {'link': link}} , upsert=True)
+    async def jisshu_get_ads_link(self):
+        link = await self.jisshu_ads_link.find_one({})
         if link is not None:
             return link.get("link")
         else:
             return None
-    async def del_stream_link(self):
+            
+    async def jisshu_del_ads_link(self):
         try: 
-            isDeleted = await self.stream_link.delete_one({})
+            isDeleted = await self.jisshu_ads_link.delete_one({})
             if isDeleted.deleted_count > 0:
                 return True
             else:
@@ -305,20 +362,55 @@ class Database:
         except Exception as e:
             print(f"Got err in db set : {e}")
             return False
-    async def setFsub(self , grpID , fsubID):
-        return await self.grp_and_ids.update_one({'grpID': grpID} , {'$set': {'grpID': grpID , "fsubID": fsubID}}, upsert=True)    
-    async def getFsub(self , grpID):
-        link = await self.grp_and_ids.find_one({"grpID": grpID})
-        if link is not None:
-            return link.get("fsubID")
+    
+#    async def setFsub(self , grpID , fsubID, name):
+#        return await self.grp_and_ids.update_one({'grpID': grpID} , {'$set': {'grpID': grpID , "fsubID": fsubID, "name": name}}, upsert=True)    
+#        
+#    async def getFsub(self , grpID):
+#        link = await self.grp_and_ids.find_one({"grpID": grpID})
+#        if link is not None:
+#            if isinstance(vp, dict):
+#                return {"id": link.fsubID, "name": link.name}
+#            else:
+#                return {"id": link.fsubID}
+#        else:
+#            return None
+#            
+#    async def delFsub(self , grpID):
+#        result =  await self.grp_and_ids.delete_one({"grpID": grpID})
+#        if result.deleted_count != 0:
+#            return True
+#        else:
+#            return False
+
+    async def get_send_movie_update_status(self, bot_id):
+        bot = await self.botcol.find_one({'id': bot_id})
+        if bot and bot.get('movie_update_feature'):
+            return bot['movie_update_feature']
         else:
-            return None
-    async def delFsub(self , grpID):
-        result =  await self.grp_and_ids.delete_one({"grpID": grpID})
-        if result.deleted_count != 0:
-            return True
+            return IS_SEND_MOVIE_UPDATE
+
+    async def update_send_movie_update_status(self, bot_id, enable):
+        bot = await self.botcol.find_one({'id': int(bot_id)})
+        if bot:
+            await self.botcol.update_one({'id': int(bot_id)}, {'$set': {'movie_update_feature': enable}})
         else:
-            return False
+            await self.botcol.insert_one({'id': int(bot_id), 'movie_update_feature': enable})            
+            
+    async def get_pm_search_status(self, bot_id):
+        bot = await self.botcol.find_one({'id': bot_id})
+        if bot and bot.get('bot_pm_search'):
+            return bot['bot_pm_search']
+        else:
+            return IS_PM_SEARCH
+
+    async def update_pm_search_status(self, bot_id, enable):
+        bot = await self.botcol.find_one({'id': int(bot_id)})
+        if bot:
+            await self.botcol.update_one({'id': int(bot_id)}, {'$set': {'bot_pm_search': enable}})
+        else:
+            await self.botcol.insert_one({'id': int(bot_id), 'bot_pm_search': enable})
+            
     async def movies_update_channel_id(self , id=None):
         if id is None:
             myLinks = await self.movies_update_channel.find_one({})
@@ -327,26 +419,9 @@ class Database:
             else:
                 return None
         return await self.movies_update_channel.update_one({} , {'$set': {'id': id}} , upsert=True)
-    async def del_movies_channel_id(self):
-        try: 
-            isDeleted = await self.movies_update_channel.delete_one({})
-            if isDeleted.deleted_count > 0:
-                return True
-            else:
-                return False
-        except Exception as e:
-            print(f"Got err in db set : {e}")
-            return False
-    async def update_post_mode_handle(self, index=0):
-        post_mode = await self.update_post_mode.find_one({})
-        if post_mode is None:
-            post_mode = DEFAULT_POST_MODE
-        if index == 1:
-            post_mode["singel_post_mode"] = not post_mode.get("singel_post_mode", True)
-        elif index == 2:
-            post_mode["all_files_post_mode"] = not post_mode.get("all_files_post_mode", True)
-        
-        await self.update_post_mode.update_one({}, {"$set": post_mode}, upsert=True)
-        
-        return post_mode
+
+    async def reset_group_settings(self, id):
+        await self.grp.update_one({'id': int(id)}, {'$set': {'settings': self.default}})
+
 db = Database()
+
