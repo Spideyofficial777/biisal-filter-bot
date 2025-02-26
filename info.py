@@ -62,6 +62,11 @@ REQUEST_CHANNEL = int(request_channel) if request_channel and id_pattern.search(
 UPI_PAY_LOGS = int(environ.get('UPI_PAY_LOGS', '-1002294764885'))
 MOVIE_UPDATE_CHANNEL = int(environ.get('MOVIE_UPDATE_CHANNEL', '-1002453024937'))
 
+FORCESUB_IMG = environ.get('FORCESUB_IMG', 'https://i.ibb.co/ZNC1Hnb/ad3f2c88a8f2.jpg')
+REFER_PICS = (environ.get("REFER_PICS", "https://envs.sh/PSI.jpg")).split() 
+PAYPICS = (environ.get('PAYPICS', 'https://envs.sh/9a6.jpg')).split()
+SUBSCRIPTION = (environ.get('SUBSCRIPTION', 'https://envs.sh/9a6.jpg'))
+
 AUTO_FILTER = is_enabled('AUTO_FILTER', True)
 IS_PM_SEARCH = is_enabled('IS_PM_SEARCH', True)
 PORT = os.environ.get('PORT', '5000')
