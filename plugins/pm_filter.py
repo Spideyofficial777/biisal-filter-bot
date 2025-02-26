@@ -22,6 +22,7 @@ CAP = {}
 # zishan [
 from database.spideyreferdb import referdb
 from database.config_db import mdb
+from Spidey.util.file_properties import get_name, get_hash, get_media_file_size
 import logging
 from urllib.parse import quote_plus
 logger = logging.getLogger(__name__)
