@@ -248,16 +248,12 @@ Yᴏᴜʀ <ul>ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴ</ul> ᴡɪʟʟ ʙᴇ ᴀᴄᴛɪᴠ
 
 #verified_{}_completed"""
 
-    MOVIES_UPDATE_TXT = """<b>#New_File_Added
-
-Title: {title}
-Rating: {rating}
-Genre: {genres}
-
-Description: {description}
-
-{file_name}
-</b>"""
+    MOVIES_UPDATE_TXT = """<b>#ɴᴇᴡ_ғɪʟᴇ_ᴀᴅᴅᴇᴅ
+📻 ᴛɪᴛʟᴇ - {title}
+🎭 ɢᴇɴʀᴇs - {genres}
+🎖 ʀᴀᴛɪɴɢ - {rating} / 10 (ʙᴀsᴇᴅ ᴏɴ {votes} ᴜsᴇʀ ʀᴀᴛɪɴɢ.
+📑 ᴅᴇꜱᴄʀɪᴘᴛɪᴏɴ - {description}</b>
+"""
     
     PLAN_TEXT = """<b>ᴡᴇ ᴀʀᴇ ᴘʀᴏᴠɪᴅɪɴɢ ᴘʀᴇᴍɪᴜᴍ ᴀᴛ ᴛʜᴇ ʟᴏᴡᴇsᴛ ᴘʀɪᴄᴇs:
     
