@@ -422,6 +422,19 @@ class Database:
 
     async def reset_group_settings(self, id):
         await self.grp.update_one({'id': int(id)}, {'$set': {'settings': self.default}})
+    
+    async def update_post_mode_handle(self, index=0):
+        post_mode = await self.update_post_mode.find_one({})
+        if post_mode is None:
+            post_mode = DEFAULT_POST_MODE
+        if index == 1:
+            post_mode["singel_post_mode"] = not post_mode.get("singel_post_mode", True)
+        elif index == 2:
+            post_mode["all_files_post_mode"] = not post_mode.get("all_files_post_mode", True)
+        
+        await self.update_post_mode.update_one({}, {"$set": post_mode}, upsert=True)
+        
+        return post_mode
 
 db = Database()
 
