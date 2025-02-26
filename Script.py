@@ -112,7 +112,10 @@ User - {}"""
 ❗️ ʟᴀɴɢᴜᴀɢᴇ - {languages}</b>
 """
 
-    FILE_CAPTION = """<a href='https://t.me/spideyofficial777'><b>ɴᴀᴍᴇ : {file_name}</b></a>"""
+    FILE_CAPTION = """
+<b><a href='https://telegram.me/Hacker_x_official_777'>• {file_name}</a>
+
+• ᴘᴏᴡᴇʀᴇᴅ ʙʏ : <a href='https://telegram.me/Hacker_x_official_777'>ʜᴀᴄᴋᴇʀ_x_ᴏꜰꜰɪᴄɪᴀʟ_777</a></b>"""
 
     RESTART_TXT = """<b>
 📅 Dᴀᴛᴇ : <code>{}</code>
