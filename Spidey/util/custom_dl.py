@@ -3,12 +3,12 @@ import asyncio
 import logging
 from info import *
 from typing import Dict, Union
-from Jisshu.bot import work_loads
+from Spidey.bot import work_loads
 from pyrogram import Client, utils, raw
 from .file_properties import get_file_ids
 from pyrogram.session import Session, Auth
 from pyrogram.errors import AuthBytesInvalid
-from Jisshu.server.exceptions import FIleNotFound
+from Spidey.server.exceptions import FIleNotFound
 from pyrogram.file_id import FileId, FileType, ThumbnailSource
 
 
