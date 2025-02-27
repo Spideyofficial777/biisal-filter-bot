@@ -2,7 +2,7 @@ from info import DATABASE_URI
 import motor.motor_asyncio
 import uuid  # for generating unique IDs
 
-class JsTopDB:
+class SpideyDB:
     def __init__(self, db_uri):
         self.client = motor.motor_asyncio.AsyncIOMotorClient(db_uri)
         self.db = self.client["movie_series_db"]
@@ -33,7 +33,7 @@ class JsTopDB:
         await self.collection.delete_many({"group_id": group_id})
 
 async def main():
-    movie_series_db = JsTopDB(DATABASE_URI)
+    movie_series_db = SpideyDB(DATABASE_URI)
     while True:
         # Simulating a movie search
         search_input = input("Enter the movie/series name: ")
