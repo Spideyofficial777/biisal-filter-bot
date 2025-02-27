@@ -81,6 +81,23 @@ LONG_IMDB_DESCRIPTION = is_enabled('LONG_IMDB_DESCRIPTION', False)
 PROTECT_CONTENT = is_enabled('PROTECT_CONTENT', False)
 SPELL_CHECK = is_enabled('SPELL_CHECK', True)
 LINK_MODE = is_enabled('LINK_MODE', False)
+#---------------------------------------------------------------
+#---------------------------------------------------------------
+#---------------------------------------------------------------
+STREAM_MODE = bool(environ.get('STREAM_MODE', True)) # Set True or Flase
+# Online Stream and Download
+
+MULTI_CLIENT = False
+SLEEP_THRESHOLD = int(environ.get('SLEEP_THRESHOLD', '60'))
+PING_INTERVAL = int(environ.get("PING_INTERVAL", "1200"))  # 20 minutes
+if 'DYNO' in environ:
+    ON_HEROKU = True
+else:
+    ON_HEROKU = False
+URL = environ.get("FQDN", "https://middle-beverie-spidey777-26285adf.koyeb.app/")
+
+#---------------------------------------------------------------
+#---------------------------------------------------------------
 SETTINGS = {
             'spell_check': SPELL_CHECK,
             'auto_filter': AUTO_FILTER,
