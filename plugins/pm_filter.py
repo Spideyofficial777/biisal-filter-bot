@@ -4,7 +4,7 @@ import math
 from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
 from Script import script
 import pyrogram
-from info import *  #SUBSCRIPTION, PAYPICS, START_IMG, SETTINGS, URL, STICKERS_IDS,PREMIUM_POINT,MAX_BTN, BIN_CHANNEL, USERNAME, URL, ADMINS,REACTIONS, LANGUAGES, QUALITIES, YEARS, SEASONS, AUTH_CHANNEL, SUPPORT_GROUP, IMDB, IMDB_TEMPLATE, FILE_CAPTION, LOG_CHANNEL, LOG_VR_CHANNEL, TUTORIAL, SHORTENER_WEBSITE, SHORTENER_API, SHORTENER_WEBSITE2, SHORTENER_API2, DELETE_TIME
+from info import *  #SUBSCRIPTION, PAYPICS, START_IMG, SETTINGS, URL, STICKERS_IDS,PREMIUM_POINT,MAX_BTN, BIN_CHANNEL, USERNAME, URL, ADMINS,REACTIONS, LANGUAGES, QUALITIES, YEARS, SEASONS, AUTH_CHANNEL, SUPPORT_GROUP, IMDB, IMDB_TEMPLATE, CAPTION, LOG_CHANNEL, LOG_VR_CHANNEL, TUTORIAL, SHORTENER_WEBSITE, SHORTENER_API, SHORTENER_WEBSITE2, SHORTENER_API2, DELETE_TIME
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, InputMediaPhoto, ChatPermissions, WebAppInfo, InputMediaAnimation, InputMediaPhoto
 from pyrogram import Client, filters, enums
 from pyrogram.errors import * #FloodWait, UserIsBlocked, MessageNotModified, PeerIdInvalid, ChatAdminRequired
@@ -19,7 +19,7 @@ BUTTONS = {}
 FILES_ID = {}
 CAP = {}
 
-# zishan [
+# Spidey [
 from database.spideyreferdb import referdb
 from database.config_db import mdb
 from Spidey.util.file_properties import get_name, get_hash, get_media_file_size
@@ -839,7 +839,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
             InlineKeyboardButton('• 𝗖𝗹𝗼𝘀𝗲 •', callback_data='close_data')
         ]]
         reply_markup = InlineKeyboardMarkup(btn)
-        m=await query.message.reply_sticker("CAACAgUAAxkBAAEBI2dnf5DU9p7r-WcPZVKgFWBnEwOw6QACMhIAAjJKAVRj6aKR8Qo5FR4E") 
+        m=await query.message.reply_sticker("CAACAgQAAxkBAAEiLZ9l7VMuTY7QHn4edR6ouHUosQQ9gwACFxIAArzT-FOmYU0gLeJu7x4E") 
         await m.delete()
         await query.message.reply_photo(
             photo=(SUBSCRIPTION),
@@ -1120,7 +1120,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         await save_group_settings(grp_id, 'tutorial_2', TUTORIAL_2)
         await save_group_settings(grp_id, 'tutorial_3', TUTORIAL_3)
         await save_group_settings(grp_id, 'template', IMDB_TEMPLATE)
-        await save_group_settings(grp_id, 'caption', FILE_CAPTION)
+        await save_group_settings(grp_id, 'caption', CAPTION)
         await save_group_settings(grp_id, 'log', LOG_VR_CHANNEL)
         await query.answer('ꜱᴜᴄᴄᴇꜱꜱғᴜʟʟʏ ʀᴇꜱᴇᴛ...')
         await query.message.edit_text("<b>ꜱᴜᴄᴄᴇꜱꜱғᴜʟʟʏ ʀᴇꜱᴇᴛ ɢʀᴏᴜᴘ ꜱᴇᴛᴛɪɴɢꜱ...\n\nɴᴏᴡ ꜱᴇɴᴅ /details ᴀɢᴀɪɴ</b>", reply_markup=reply_markup)
