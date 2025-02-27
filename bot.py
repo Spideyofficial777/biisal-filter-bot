@@ -44,7 +44,7 @@ files = glob.glob(ppath)
 SpideyBot.start()
 loop = asyncio.get_event_loop()
 
-pyrogram.utils.MIN_CHANNEL_ID =  -1009147483647
+pyrogram.utils.MIN_CHANNEL_ID =  -1002294764885
 
 async def Spidey_start():
     print('\n')
