@@ -30,6 +30,8 @@ class temp(object):
     USERS_CANCEL = False
     GROUPS_CANCEL = False    
     CHAT = {}
+    BANNED_USERS = []
+    BANNED_CHATS = []
 def formate_file_name(file_name):
     file_name = ' '.join(filter(lambda x: not x.startswith('[') and not x.startswith('@') and not x.startswith('www.'), file_name.split()))
     return file_name
@@ -238,19 +240,19 @@ def get_file_id(message: "Message") -> Any:
                 setattr(media, "message_type", attr)
                 return media
 
-def get_hash(media_msg: Message) -> str:
-    media = get_file_id(media_msg)
-    return getattr(media, "file_unique_id", "")[:6]
+#def get_hash(media_msg: Message) -> str:
+#    media = get_file_id(media_msg)
+ #   return getattr(media, "file_unique_id", "")[:6]
 
 def get_status():
-    tz = pytz.timezone('Asia/Colombo')
+    tz = pytz.timezone('Asia/Kolkata')
     hour = datetime.now(tz).time().hour
     if 5 <= hour < 12:
-        sts = "ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ"
+        sts = "𝐺𝑜𝑜𝑑 𝑀𝑜𝑟𝑛𝑖𝑛𝑔"
     elif 12 <= hour < 18:
-        sts = "ɢᴏᴏᴅ ᴀꜰᴛᴇʀɴᴏᴏɴ"
+        sts = "𝐺𝑜𝑜𝑑 𝐴𝑓𝑡𝑒𝑟𝑛𝑜𝑜𝑛"
     else:
-        sts = "ɢᴏᴏᴅ ᴇᴠᴇɴɪɴɢ"
+        sts = "𝐺𝑜𝑜𝑑 𝐸𝑣𝑒𝑛𝑖𝑛𝑔"
     return sts
 
 async def is_check_admin(bot, chat_id, user_id):
@@ -296,3 +298,8 @@ def get_readable_time(seconds):
             period_value, seconds = divmod(seconds, period_seconds)
             result += f'{int(period_value)}{period_name}'
     return result
+
+async def save_default_settings(id):
+    await db.reset_group_settings(id)
+    current = await db.get_settings(id)
+    temp.SETTINGS.update({id: current})
