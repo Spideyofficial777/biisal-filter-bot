@@ -14,12 +14,6 @@ from aiohttp import web
 from plugins import web_server, check_expired_premium
 import time
 
-#Spidey
-from Spidey.bot import SpideyBot
-from Spidey.util.keepalive import ping_server
-from Spidey.bot.clients import initialize_clients
-
-
 class Bot(Client):
     def __init__(self):
         super().__init__(
@@ -32,8 +26,7 @@ class Bot(Client):
             plugins={"root": "plugins"}
         )
         
-    async def Spidey_start(self):
-        
+    async def start(self):
         st = time.time()
         b_users, b_chats = await db.get_banned()
         temp.BANNED_USERS = b_users
@@ -56,7 +49,7 @@ class Bot(Client):
         await app.setup()
         bind_address = "0.0.0.0"
         await web.TCPSite(app, bind_address, PORT).start()
-        await self.send_message(chat_id=LOG_CHANNEL, text=script.RESTART_TXT.format(me.mention, today, time))
+        await self.send_message(chat_id=LOG_CHANNEL, text=f"<b>{me.mention} ʀᴇsᴛᴀʀᴛᴇᴅ 🤖\n\n📆 ᴅᴀᴛᴇ - <code>{today}</code>\n🕙 ᴛɪᴍᴇ - <code>{timee}</code>\n🌍 ᴛɪᴍᴇ ᴢᴏɴᴇ - <code>Asia/Kolkata</code></b>")
         # await self.send_message(chat_id=SUPPORT_GROUP, text=f"<b>ʀᴀᴅʜᴇ ʀᴀᴅʜᴇ ᴇᴠᴇʀʏᴏɴᴇ 😚</b>")
         tt = time.time() - st
         seconds = int(datetime.timedelta(seconds=tt).seconds)
