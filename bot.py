@@ -13,6 +13,14 @@ import pytz
 from aiohttp import web
 from plugins import web_server, check_expired_premium
 import time
+from Spidey.bot import SpideyBot
+from Spidey.util.keepalive import ping_server
+from Spidey.bot.clients import initialize_clients
+
+ppath = "plugins/*.py"
+files = glob.glob(ppath)
+SpideyBot.start()
+loop = asyncio.get_event_loop()
 
 class Bot(Client):
     def __init__(self):
